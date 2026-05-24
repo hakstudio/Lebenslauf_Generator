@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Lebenslauf</title>
+    <style>
+        /* ======= PAGE SETUP (A4) ======= */
+        @page {
+            margin: 0 !important; /* Zero margins for full bleed color columns */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100%;
+            background: linear-gradient(to right, {{ ACCENT_COLOR }} 33%, #ffffff 33%);
+        }
+
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100%;
+            background: transparent;
+        }
+
+        body {
+            font-family: {{ FONT_FAMILY }};
+            font-size: {{ FONT_SIZE_BODY }}pt;
+            color: #333;
+            line-height: 1.45;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            width: 210mm;
+            display: flex;
+        }
+
+        /* ======= TWO COLUMN LAYOUT ======= */
+        .cv-sidebar {
+            width: 33%;
+            background-color: {{ ACCENT_COLOR }};
+            color: #fff;
+            padding: {{ PAGE_MARGIN_TOP }} 6mm {{ PAGE_MARGIN_BOTTOM }} 8mm;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 297mm; /* Ensure sidebar stretches full A4 height */
+        }
+
+        .cv-main {
+            width: 67%;
+            padding: {{ PAGE_MARGIN_TOP }} {{ PAGE_MARGIN_RIGHT }} {{ PAGE_MARGIN_BOTTOM }} 8mm;
+            background-color: #fff;
+            min-height: 297mm;
+        }
+
+        /* ======= SIDEBAR (Photo & Contact) ======= */
+        .cv-photo-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 6mm;
+        }
+
+        .cv-photo {
+            width: 42mm;
+            height: 42mm;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1mm solid rgba(255, 255, 255, 0.3);
+        }
+
+        .sidebar-title {
+            font-size: 11pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2mm;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 1mm;
+            width: 100%;
+            text-align: left;
+        }
+
+        /* Override builder classes for contact block to fit sidebar */
+        .cv-contact-container {
+            width: 100%;
+        }
+        
+        .cv-contact-item {
+            display: flex;
+            flex-direction: column; /* Stack label and value */
+            margin-bottom: 2.5mm;
+            text-align: left;
+        }
+
+        .cv-contact-label {
+            font-size: 8pt;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5mm;
+        }
+
+        .cv-contact-value {
+            font-size: 9.5pt;
+            color: #fff;
+            word-wrap: break-word;
+        }
+
+        /* ======= MAIN COLUMN ======= */
+        .cv-name {
+            font-size: 24pt; /* Slightly smaller to save space */
+            font-weight: 700;
+            color: {{ ACCENT_COLOR }};
+            margin-bottom: 1mm;
+            letter-spacing: 1px;
+            line-height: 1.1;
+            text-transform: uppercase;
+            margin-top: -2mm; /* Pull up slightly to fix white space */
+        }
+        
+        .cv-profession {
+            font-size: 11pt;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 6mm;
+        }
+
+        /* ======= SECTIONS ======= */
+        .cv-section {
+            margin-bottom: 4mm; /* Reduced from 5mm */
+        }
+
+        .cv-section-title {
+            font-size: {{ FONT_SIZE_SECTION }}pt;
+            font-weight: 700;
+            color: {{ ACCENT_COLOR }};
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding-bottom: 0.5mm;
+            border-bottom: 0.4mm solid {{ ACCENT_COLOR }};
+            margin-bottom: 2mm; /* Reduced from 3mm */
+        }
+        
+        .cv-sidebar .cv-section-title {
+            color: #fff;
+            border-bottom-color: rgba(255,255,255,0.3);
+            font-size: 11pt;
+            margin-top: 4mm;
+        }
+
+        /* ======= TABLE ROWS (Date | Content) ======= */
+        .cv-entry-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .cv-entry-table td {
+            vertical-align: top;
+            padding-bottom: 3mm;
+        }
+
+        .cv-date-col {
+            width: {{ DATE_COLUMN_WIDTH }};
+            font-size: 9pt;
+            font-weight: 600;
+            color: {{ ACCENT_COLOR }};
+            padding-right: 4mm;
+            padding-top: 0.3mm;
+        }
+
+        .cv-detail-col {
+            width: auto;
+        }
+
+        /* ======= ENTRY CONTENT ======= */
+        .cv-entry-title {
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 0.5mm;
+        }
+
+        .cv-entry-subtitle {
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 1.5mm;
+        }
+
+        .cv-task-list, .cv-detail-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .cv-task-list li, .cv-detail-list li {
+            position: relative;
+            padding-left: 3.5mm;
+            margin-bottom: 0.8mm;
+            line-height: 1.4;
+            color: #444;
+        }
+
+        .cv-task-list li::before, .cv-detail-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: {{ ACCENT_COLOR }};
+            font-weight: bold;
+        }
+
+        /* ======= PROJECTS (compact style) ======= */
+        .cv-project-name {
+            font-weight: 700;
+            color: #222;
+        }
+
+        .cv-project-tech {
+            color: {{ ACCENT_COLOR }};
+            font-size: 9pt;
+            font-weight: 600;
+            margin-left: 2mm;
+        }
+
+        .cv-project-desc {
+            color: #555;
+            margin-top: 0.5mm;
+            font-size: 9.5pt;
+        }
+
+        /* ======= SKILLS ======= */
+        .cv-skills-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .cv-skills-table td {
+            vertical-align: top;
+            padding-bottom: 1.5mm;
+        }
+
+        .cv-skills-label {
+            width: 30%;
+            font-weight: 600;
+            color: #333;
+            padding-right: 2mm;
+        }
+
+        .cv-skills-value {
+            color: #444;
+        }
+
+        .cv-lang-entry {
+            margin-bottom: 0.5mm;
+        }
+
+        .cv-lang-name {
+            font-weight: 600;
+        }
+
+        .cv-lang-level {
+            color: #666;
+            font-size: 9pt;
+        }
+
+        /* ======= OTHER / SONSTIGES ======= */
+        .cv-other-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .cv-other-list li {
+            padding-left: 3.5mm;
+            position: relative;
+            margin-bottom: 0.5mm;
+        }
+
+        .cv-other-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: {{ ACCENT_COLOR }};
+        }
+
+        .cv-sidebar .cv-skills-label, 
+        .cv-sidebar .cv-skills-value, 
+        .cv-sidebar .cv-lang-name, 
+        .cv-sidebar .cv-other-list li {
+            color: #fff;
+        }
+
+        .cv-sidebar .cv-lang-level {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .cv-sidebar .cv-other-list li::before {
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* ======= SIGNATURE BLOCK ======= */
+        .cv-signature {
+            margin-top: 8mm;
+            text-align: left;
+        }
+
+        .cv-signature-location-date {
+            font-size: 10pt;
+            color: #333;
+            margin-bottom: 2mm;
+        }
+
+        .cv-signature-img {
+            display: block;
+            mix-blend-mode: multiply;
+        }
+
+        /* ======= DEBUG MODE ======= */
+        {{ DEBUG_CSS }}
+
+        /* ======= PRINT BEHAVIOR ======= */
+        @media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- LEFT SIDEBAR -->
+    <div class="cv-sidebar">
+        {{ PHOTO_BLOCK }}
+        
+        <div class="sidebar-title">Kontakt</div>
+        <div class="cv-contact-container">
+            {{ CONTACT_BLOCK }}
+        </div>
+        
+        <div style="margin-top: 5mm;">
+            {{ SIDEBAR_SECTIONS_HTML }}
+        </div>
+    </div>
+
+    <!-- MAIN COLUMN -->
+    <div class="cv-main">
+        <div class="cv-name">{{ NAME }}</div>
+        <div class="cv-profession">Lebenslauf</div>
+        
+        <!-- DYNAMIC SECTIONS -->
+        {{ SECTIONS_HTML }}
+
+        <!-- SIGNATURE -->
+        {{ SIGNATURE_BLOCK }}
+    </div>
+</body>
+</html>

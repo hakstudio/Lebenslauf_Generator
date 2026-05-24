@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# PDF & Images (Protect Personal Info)
+*.pdf
+*.jpg
+*.jpeg
+*.png
+
+# OS Files
+.DS_Store
+Thumbs.db
