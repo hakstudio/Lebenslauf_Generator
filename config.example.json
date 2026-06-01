@@ -7,8 +7,12 @@
     "date_of_birth": "01.01.1990",
     "place_of_birth": "Musterstadt",
     "nationality": "Deutsch",
+    "linkedin": "linkedin.com/in/mustermann",
+    "github": "github.com/mustermann",
+    "portfolio": "mustermann.github.io/portfolio",
     "photo": "bewerbungsfoto.jpg"
   },
+  "profile": "Engagierter Softwareentwickler mit 3+ Jahren Erfahrung in der Webentwicklung. Spezialisiert auf Full-Stack-Anwendungen mit React und Spring Boot.",
   "education": [
     {
       "period": "09/2019 – 06/2023",
@@ -70,12 +74,12 @@
   "skills": {
     "languages": [
       { "name": "Deutsch", "level": "Muttersprache" },
-      { "name": "Englisch", "level": "B2" },
+      { "name": "Englisch", "level": "Gute Kenntnisse" },
       { "name": "Türkisch", "level": "Muttersprache" }
     ],
     "technical": [
       { "category": "Programmiersprachen", "items": "Dart, Java, Python, C#, JavaScript" },
-      { "category": "Frameworks & Tools", "items": "Flutter, Spring Boot, Unity, Git, Docker" },
+      { "category": "Frameworks & Tools", "items": "Flutter, Spring Boot, React, Git, Docker" },
       { "category": "Betriebssysteme", "items": "Windows, macOS, Linux" }
     ]
   },
@@ -84,31 +88,33 @@
   ],
   "signature": {
     "city": "Musterstadt",
-    "date": "24. Mai 2026",
+    "date": "auto",
     "image": "unterschrift.jpg",
     "scale": 15
   },
   "settings": {
     "font": {
       "family": "\"Segoe UI\", Arial, Helvetica, sans-serif",
-      "size_body": 11,
-      "size_section_title": 13,
-      "size_name": 18
+      "size_body": 10,
+      "size_section_title": 12,
+      "size_name": 14
     },
     "layout": {
-      "style": "modern",
+      "style": "classic",
       "page_margin_top": "15mm",
-      "page_margin_bottom": "15mm",
-      "page_margin_left": "25mm",
-      "page_margin_right": "20mm",
-      "date_column_width": "28%",
+      "page_margin_bottom": "12mm",
+      "page_margin_left": "20mm",
+      "page_margin_right": "15mm",
+      "date_column_width": "25%",
       "accent_color": "#1e3a5f",
       "debug_colors": false
     },
     "sections_order": [
-      "education",
       "experience",
-      "projects"
+      "education",
+      "projects",
+      "skills",
+      "other"
     ],
     "sidebar_sections_order": [
       "skills",

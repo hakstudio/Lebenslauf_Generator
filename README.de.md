@@ -11,10 +11,12 @@ Dieser Generator folgt den etablierten deutschen Lebenslauf-Standards:
 - **Tabellarisches Format** mit Daten links, Details rechts
 - **Antichronologische Reihenfolge** (neueste zuerst) innerhalb jedes Abschnitts
 - **Professionelles Bewerbungsfoto** oben rechts (~3,5 × 4,5 cm)
+- **Kurzprofil** (kurze Zusammenfassung) unter dem Header
 - **Datumsformat:** `MM/YYYY – MM/YYYY` mit Halbgeviertstrich
-- **CEFR-Sprachniveaus** (A1–C2, Muttersprache)
 - **Ort, Datum, Unterschrift** am Ende (Best Practice)
+- **Auto-Datum:** Das Unterschriftsdatum wird bei jeder Generierung automatisch aktualisiert
 - **ATS-kompatibel:** Keine Icons, Fortschrittsbalken oder komplexe Grafiken
+- **Einseitig optimiert:** Schriftgrößen und Abstände für kompaktes Layout
 
 ## Einrichtung & Verwendung
 
@@ -38,24 +40,43 @@ python3 generate_lebenslauf.py
 ```
 Alternative Konfigurationsdatei:
 ```bash
-python3 generate_lebenslauf.py --config alt_config.json
+python3 generate_lebenslauf.py --config config.gastronomie.json
+```
+HTML-Datei zum Debuggen beibehalten:
+```bash
+python3 generate_lebenslauf.py --keep-html
 ```
 
-Eine formatierte PDF-Datei (z. B. `Lebenslauf_Max_Mustermann.pdf`) wird generiert.
+## Multi-Config-Workflow
+
+Erstellen Sie verschiedene Konfigurationsdateien für verschiedene Berufsfelder:
+- `config.json` — IT / Softwareentwicklung
+- `config.gastronomie.json` — Gastronomie
+- `config.kaufmann.json` — Kaufmann / Wirtschaft
+
+Alle verwenden das gleiche klassische Layout — nur der Inhalt ändert sich.
 
 ## Abschnittsreihenfolge (Standard)
 
 | # | Abschnitt | Beschreibung |
 |---|---|---|
 | 1 | Persönliche Daten | Name, Adresse, Kontakt, Foto |
-| 2 | Bildungsweg | Ausbildung (antichronologisch) |
+| 2 | Kurzprofil | 2-3 Sätze Zusammenfassung |
 | 3 | Berufserfahrung | Berufliche Stationen |
-| 4 | Projekte | Projekte mit Technologien |
-| 5 | Kenntnisse | Sprachen (CEFR) + IT-Kenntnisse |
-| 6 | Sonstiges | Führerschein, Zertifikate usw. |
-| 7 | Unterschrift | Ort, Datum, Unterschrift |
+| 4 | Bildungsweg | Ausbildung (antichronologisch) |
+| 5 | Projekte | Projekte mit Technologien |
+| 6 | Kenntnisse | Sprachen + IT-Kenntnisse |
+| 7 | Sonstiges | Führerschein, Zertifikate usw. |
+| 8 | Unterschrift | Ort, Datum, Unterschrift |
 
 > Die Abschnittsreihenfolge ist über `settings.sections_order` in der config.json konfigurierbar.
+
+## CLI-Argumente
+
+| Argument | Standard | Beschreibung |
+|---|---|---|
+| `--config` | `config.json` | Pfad zur Konfigurationsdatei |
+| `--keep-html` | `false` | HTML-Datei nach der PDF-Generierung beibehalten |
 
 ## Abhängigkeiten
 - Python 3.8+

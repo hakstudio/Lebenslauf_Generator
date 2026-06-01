@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Lebenslauf von {{ NAME }}">
     <title>Lebenslauf</title>
     <style>
         /* ======= PAGE SETUP (A4) ======= */
@@ -235,25 +236,19 @@
         }
 
         /* ======= SKILLS ======= */
-        .cv-skills-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .cv-skills-table td {
-            vertical-align: top;
-            padding-bottom: 1.5mm;
+        .cv-skill-group {
+            margin-bottom: 3.5mm;
         }
 
         .cv-skills-label {
-            width: 30%;
             font-weight: 600;
             color: #333;
-            padding-right: 2mm;
+            margin-bottom: 1mm;
         }
 
         .cv-skills-value {
             color: #444;
+            line-height: 1.4;
         }
 
         .cv-lang-entry {
@@ -335,10 +330,10 @@
 </head>
 <body>
     <!-- LEFT SIDEBAR -->
-    <div class="cv-sidebar">
+    <aside class="cv-sidebar">
         {{ PHOTO_BLOCK }}
         
-        <div class="sidebar-title">Kontakt</div>
+        <h2 class="sidebar-title">Kontakt</h2>
         <div class="cv-contact-container">
             {{ CONTACT_BLOCK }}
         </div>
@@ -346,18 +341,21 @@
         <div style="margin-top: 5mm;">
             {{ SIDEBAR_SECTIONS_HTML }}
         </div>
-    </div>
+    </aside>
 
     <!-- MAIN COLUMN -->
-    <div class="cv-main">
-        <div class="cv-name">{{ NAME }}</div>
+    <main class="cv-main">
+        <h1 class="cv-name">{{ NAME }}</h1>
         <div class="cv-profession">Lebenslauf</div>
+
+        <!-- KURZPROFIL -->
+        {{ PROFILE_BLOCK }}
         
         <!-- DYNAMIC SECTIONS -->
         {{ SECTIONS_HTML }}
 
         <!-- SIGNATURE -->
         {{ SIGNATURE_BLOCK }}
-    </div>
+    </main>
 </body>
 </html>

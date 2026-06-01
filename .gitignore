@@ -5,12 +5,21 @@ __pycache__/
 venv/
 .env
 
+# Config
+config.json
+
 # PDF & Images (Protect Personal Info)
 *.pdf
 *.jpg
 *.jpeg
 *.png
 
+# Temporary HTML files
+temp_*.html
+preview_cv.html
+
 # OS Files
 .DS_Store
 Thumbs.db
+config*.json
+!config.example.json

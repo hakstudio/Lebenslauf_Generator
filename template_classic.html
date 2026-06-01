@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Lebenslauf von {{ NAME }}">
     <title>Lebenslauf</title>
     <style>
         /* ======= PAGE SETUP (A4) ======= */
@@ -20,7 +21,7 @@
             font-family: {{ FONT_FAMILY }};
             font-size: {{ FONT_SIZE_BODY }}pt;
             color: #222;
-            line-height: 1.45;
+            line-height: 1.4;
             background: #fff;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
@@ -31,40 +32,43 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 5mm;
+            margin-bottom: 3mm;
         }
 
         .cv-header-left {
             flex: 1;
-            padding-right: 8mm;
+            padding-right: 6mm;
         }
 
         .cv-name {
             font-size: {{ FONT_SIZE_NAME }}pt;
             font-weight: 700;
             color: {{ ACCENT_COLOR }};
-            margin-bottom: 3mm;
+            margin-bottom: 2mm;
             letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
         .cv-contact-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.2mm 6mm;
-            font-size: 9pt;
+            gap: 0.8mm 5mm;
+            font-size: 8.5pt;
             color: #444;
         }
 
         .cv-contact-item {
             display: flex;
             align-items: baseline;
-            gap: 2mm;
+            gap: 1.5mm;
         }
 
         .cv-contact-label {
             color: #777;
-            font-size: 8pt;
-            min-width: 18mm;
+            font-size: 7.5pt;
+            min-width: 16mm;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         .cv-contact-value {
@@ -82,16 +86,26 @@
             border: 0.3mm solid #ddd;
         }
 
+        /* ======= KURZPROFIL ======= */
+        .cv-profile {
+            font-size: 9pt;
+            color: #444;
+            line-height: 1.4;
+            margin-bottom: 3mm;
+            padding: 2mm 0;
+            font-style: italic;
+        }
+
         /* ======= DIVIDER LINE (under header) ======= */
         .cv-header-divider {
             border: none;
-            border-top: 0.6mm solid {{ ACCENT_COLOR }};
-            margin-bottom: 4mm;
+            border-top: 0.5mm solid {{ ACCENT_COLOR }};
+            margin-bottom: 3mm;
         }
 
         /* ======= SECTION ======= */
         .cv-section {
-            margin-bottom: 4mm;
+            margin-bottom: 2.5mm;
         }
 
         .cv-section-title {
@@ -100,9 +114,9 @@
             color: {{ ACCENT_COLOR }};
             text-transform: uppercase;
             letter-spacing: 0.8px;
-            padding-bottom: 1.2mm;
+            padding-bottom: 0.8mm;
             border-bottom: 0.3mm solid {{ ACCENT_COLOR }};
-            margin-bottom: 2.5mm;
+            margin-bottom: 1.5mm;
         }
 
         /* ======= TABLE ROWS (Date | Content) ======= */
@@ -113,15 +127,15 @@
 
         .cv-entry-table td {
             vertical-align: top;
-            padding-bottom: 3mm;
+            padding-bottom: 2mm;
         }
 
         .cv-date-col {
             width: {{ DATE_COLUMN_WIDTH }};
-            font-size: 9pt;
+            font-size: 8.5pt;
             color: #555;
-            padding-right: 4mm;
-            padding-top: 0.3mm;
+            padding-right: 3mm;
+            padding-top: 0.2mm;
             white-space: nowrap;
         }
 
@@ -133,31 +147,33 @@
         .cv-entry-title {
             font-weight: 700;
             color: #222;
-            margin-bottom: 0.5mm;
+            margin-bottom: 0.3mm;
         }
 
         .cv-entry-subtitle {
             color: #555;
-            margin-bottom: 1mm;
+            margin-bottom: 0.8mm;
+            font-size: 9.5pt;
         }
 
         .cv-entry-location {
             font-style: italic;
             color: #777;
-            font-size: 9pt;
+            font-size: 8.5pt;
         }
 
         .cv-task-list {
             list-style: none;
             padding: 0;
-            margin: 1mm 0 0 0;
+            margin: 0.5mm 0 0 0;
         }
 
         .cv-task-list li {
             position: relative;
-            padding-left: 3.5mm;
-            margin-bottom: 0.5mm;
-            line-height: 1.4;
+            padding-left: 3mm;
+            margin-bottom: 0.3mm;
+            line-height: 1.35;
+            font-size: 9.5pt;
         }
 
         .cv-task-list li::before {
@@ -171,15 +187,15 @@
         .cv-detail-list {
             list-style: none;
             padding: 0;
-            margin: 0.5mm 0 0 0;
+            margin: 0.3mm 0 0 0;
         }
 
         .cv-detail-list li {
             position: relative;
-            padding-left: 3.5mm;
-            margin-bottom: 0.3mm;
+            padding-left: 3mm;
+            margin-bottom: 0.2mm;
             color: #555;
-            font-size: 9.5pt;
+            font-size: 9pt;
         }
 
         .cv-detail-list li::before {
@@ -197,49 +213,56 @@
 
         .cv-project-tech {
             color: {{ ACCENT_COLOR }};
-            font-size: 9pt;
-            margin-left: 2mm;
+            font-size: 8.5pt;
+            margin-left: 1.5mm;
         }
 
         .cv-project-desc {
             color: #555;
-            margin-top: 0.5mm;
-            font-size: 9.5pt;
+            margin-top: 0.3mm;
+            font-size: 9pt;
         }
 
         /* ======= SKILLS ======= */
-        .cv-skills-table {
-            width: 100%;
-            border-collapse: collapse;
+        .cv-skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1mm 0;
         }
 
-        .cv-skills-table td {
-            vertical-align: top;
-            padding-bottom: 1.5mm;
+        .cv-skill-group {
+            width: 100%;
+            display: flex;
+            align-items: baseline;
+            gap: 2mm;
+            margin-bottom: 0.8mm;
         }
 
         .cv-skills-label {
-            width: {{ DATE_COLUMN_WIDTH }};
-            font-size: 9.5pt;
+            font-size: 9pt;
             color: #555;
-            padding-right: 4mm;
+            min-width: 25%;
+            padding-right: 3mm;
+            font-weight: 600;
         }
 
         .cv-skills-value {
             color: #333;
+            font-size: 9.5pt;
         }
 
         .cv-lang-entry {
-            margin-bottom: 0.5mm;
+            margin-bottom: 0.3mm;
         }
 
         .cv-lang-name {
             display: inline;
+            font-weight: 600;
         }
 
         .cv-lang-level {
             color: #777;
-            font-size: 9pt;
+            font-size: 8.5pt;
         }
 
         /* ======= OTHER / SONSTIGES ======= */
@@ -250,9 +273,10 @@
         }
 
         .cv-other-list li {
-            padding-left: 3.5mm;
+            padding-left: 3mm;
             position: relative;
-            margin-bottom: 0.3mm;
+            margin-bottom: 0.2mm;
+            font-size: 9.5pt;
         }
 
         .cv-other-list li::before {
@@ -264,14 +288,14 @@
 
         /* ======= SIGNATURE BLOCK ======= */
         .cv-signature {
-            margin-top: 6mm;
+            margin-top: 4mm;
             text-align: left;
         }
 
         .cv-signature-location-date {
-            font-size: 10pt;
+            font-size: 9pt;
             color: #333;
-            margin-bottom: 2mm;
+            margin-bottom: 1mm;
         }
 
         .cv-signature-img {
@@ -280,7 +304,7 @@
         }
 
         .cv-signature-name {
-            font-size: 10pt;
+            font-size: 9pt;
             color: #333;
             margin-top: 1mm;
         }
@@ -310,6 +334,9 @@
     </div>
 
     <hr class="cv-header-divider">
+
+    <!-- ======= KURZPROFIL ======= -->
+    {{ PROFILE_BLOCK }}
 
     <!-- ======= DYNAMIC SECTIONS ======= -->
     {{ SECTIONS_HTML }}

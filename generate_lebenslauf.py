@@ -8,6 +8,7 @@ import json
 import os
 import asyncio
 import argparse
+from datetime import datetime
 from playwright.async_api import async_playwright
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -48,11 +49,13 @@ def build_contact_block(personal):
     if personal.get("nationality"):
         items.append(("Staatsangehörigkeit", personal["nationality"]))
 
-    # Row 5: Optional links (LinkedIn, GitHub)
+    # Row 5: Optional links (LinkedIn, GitHub, Portfolio)
     if personal.get("linkedin"):
         items.append(("LinkedIn", personal["linkedin"]))
     if personal.get("github"):
         items.append(("GitHub", personal["github"]))
+    if personal.get("portfolio"):
+        items.append(("Portfolio", personal["portfolio"]))
 
     html = ""
     for label, value in items:
@@ -61,6 +64,13 @@ def build_contact_block(personal):
                 <span class="cv-contact-value">{value}</span>
             </div>\n'''
     return html
+
+
+def build_profile_section(profile_text):
+    """Build the Kurzprofil section displayed below the name."""
+    if not profile_text:
+        return ""
+    return f'<div class="cv-profile">{profile_text}</div>\n'
 
 
 def build_photo_block(personal):
@@ -80,8 +90,8 @@ def build_education_section(education_list):
     if not education_list:
         return ""
 
-    html = '<div class="cv-section">\n'
-    html += '    <div class="cv-section-title">Bildungsweg</div>\n'
+    html = '<section class="cv-section">\n'
+    html += '    <h2 class="cv-section-title">Bildungsweg</h2>\n'
     html += '    <table class="cv-entry-table">\n'
 
     for entry in education_list:
@@ -108,7 +118,7 @@ def build_education_section(education_list):
         html += "        </tr>\n"
 
     html += "    </table>\n"
-    html += "</div>\n"
+    html += "</section>\n"
     return html
 
 
@@ -117,8 +127,8 @@ def build_experience_section(experience_list):
     if not experience_list:
         return ""
 
-    html = '<div class="cv-section">\n'
-    html += '    <div class="cv-section-title">Berufserfahrung</div>\n'
+    html = '<section class="cv-section">\n'
+    html += '    <h2 class="cv-section-title">Berufserfahrung</h2>\n'
     html += '    <table class="cv-entry-table">\n'
 
     for entry in experience_list:
@@ -143,7 +153,7 @@ def build_experience_section(experience_list):
         html += "        </tr>\n"
 
     html += "    </table>\n"
-    html += "</div>\n"
+    html += "</section>\n"
     return html
 
 
@@ -152,8 +162,8 @@ def build_projects_section(projects_list):
     if not projects_list:
         return ""
 
-    html = '<div class="cv-section">\n'
-    html += '    <div class="cv-section-title">Projekte</div>\n'
+    html = '<section class="cv-section">\n'
+    html += '    <h2 class="cv-section-title">Projekte</h2>\n'
     html += '    <table class="cv-entry-table">\n'
 
     for project in projects_list:
@@ -175,7 +185,7 @@ def build_projects_section(projects_list):
         html += "        </tr>\n"
 
     html += "    </table>\n"
-    html += "</div>\n"
+    html += "</section>\n"
     return html
 
 
@@ -184,9 +194,9 @@ def build_skills_section(skills):
     if not skills:
         return ""
 
-    html = '<div class="cv-section">\n'
-    html += '    <div class="cv-section-title">Kenntnisse</div>\n'
-    html += '    <table class="cv-skills-table">\n'
+    html = '<section class="cv-section">\n'
+    html += '    <h2 class="cv-section-title">Kenntnisse</h2>\n'
+    html += '    <div class="cv-skills-container">\n'
 
     # Languages
     languages = skills.get("languages", [])
@@ -196,23 +206,23 @@ def build_skills_section(skills):
             level = f' ({lang["level"]})' if lang.get("level") else ""
             lang_html += f'<div class="cv-lang-entry"><span class="cv-lang-name">{lang["name"]}</span><span class="cv-lang-level">{level}</span></div>\n'
 
-        html += "        <tr>\n"
-        html += '            <td class="cv-skills-label">Sprachen</td>\n'
-        html += f'            <td class="cv-skills-value">{lang_html}</td>\n'
-        html += "        </tr>\n"
+        html += '        <div class="cv-skill-group">\n'
+        html += '            <div class="cv-skills-label">Sprachen</div>\n'
+        html += f'            <div class="cv-skills-value">{lang_html}</div>\n'
+        html += '        </div>\n'
 
     # Technical skills (grouped by category)
     technical = skills.get("technical", [])
     for tech in technical:
         category = tech.get("category", "")
         items = tech.get("items", "")
-        html += "        <tr>\n"
-        html += f'            <td class="cv-skills-label">{category}</td>\n'
-        html += f'            <td class="cv-skills-value">{items}</td>\n'
-        html += "        </tr>\n"
+        html += '        <div class="cv-skill-group">\n'
+        html += f'            <div class="cv-skills-label">{category}</div>\n'
+        html += f'            <div class="cv-skills-value">{items}</div>\n'
+        html += '        </div>\n'
 
-    html += "    </table>\n"
-    html += "</div>\n"
+    html += "    </div>\n"
+    html += "</section>\n"
     return html
 
 
@@ -221,14 +231,24 @@ def build_other_section(other_list):
     if not other_list:
         return ""
 
-    html = '<div class="cv-section">\n'
-    html += '    <div class="cv-section-title">Sonstiges</div>\n'
+    html = '<section class="cv-section">\n'
+    html += '    <h2 class="cv-section-title">Sonstiges</h2>\n'
     html += '    <ul class="cv-other-list">\n'
     for item in other_list:
         html += f"        <li>{item}</li>\n"
     html += "    </ul>\n"
-    html += "</div>\n"
+    html += "</section>\n"
     return html
+
+
+def format_german_date():
+    """Generate the current date in German format (e.g. '1. Juni 2026')."""
+    german_months = [
+        "Januar", "Februar", "März", "April", "Mai", "Juni",
+        "Juli", "August", "September", "Oktober", "November", "Dezember"
+    ]
+    now = datetime.now()
+    return f"{now.day}. {german_months[now.month - 1]} {now.year}"
 
 
 def build_signature_block(signature, settings):
@@ -239,6 +259,10 @@ def build_signature_block(signature, settings):
     city = signature.get("city", "")
     date = signature.get("date", "")
     sig_scale = signature.get("scale", 100)
+
+    # Auto-generate current date if set to "auto"
+    if date == "auto":
+        date = format_german_date()
 
     html = '<div class="cv-signature">\n'
 
@@ -254,7 +278,7 @@ def build_signature_block(signature, settings):
         sig_path = os.path.join(BASE_DIR, sig_image)
         if os.path.exists(sig_path):
             sig_style = f"zoom: {sig_scale / 100.0}; mix-blend-mode: multiply;"
-            html += f'    <img src="file://{sig_path}" class="cv-signature-img" style="{sig_style}" />\n'
+            html += f'    <img src="file://{sig_path}" class="cv-signature-img" style="{sig_style}" alt="Unterschrift" />\n'
         else:
             # Spacer if no signature image exists
             html += '    <div style="height: 12mm;"></div>\n'
@@ -342,13 +366,19 @@ def generate_html(config, output_html_path):
     # ---- Header: Photo ----
     html = html.replace("{{ PHOTO_BLOCK }}", build_photo_block(personal))
 
+    # ---- Kurzprofil ----
+    profile_text = config.get("profile", "")
+    html = html.replace("{{ PROFILE_BLOCK }}", build_profile_section(profile_text))
+
     # ---- Sections (dynamic, ordered) ----
     main_order = settings.get("sections_order", ["education", "experience", "projects"])
     sidebar_order = settings.get("sidebar_sections_order", ["skills", "other"])
 
     if style == "classic":
-        # In classic layout, everything goes into the main column sequentially
-        combined_order = main_order + sidebar_order
+        # In classic layout, everything goes into the main column sequentially.
+        # Merge sidebar sections that aren't already in main_order to avoid duplicates.
+        extra = [s for s in sidebar_order if s not in main_order]
+        combined_order = main_order + extra
         html = html.replace("{{ SECTIONS_HTML }}", build_all_sections(config, combined_order))
         html = html.replace("{{ SIDEBAR_SECTIONS_HTML }}", "") # Unused in classic
     else:
@@ -393,14 +423,23 @@ async def generate_pdf(html_path, output_pdf_path, force_single_page=False):
         await page.goto(f"file://{html_path}", wait_until="networkidle")
 
         if force_single_page:
-            # Inject Javascript loop to actively reduce zoom until the document height shrinks to 1 page
+            # Inject Javascript loop to actively reduce zoom until the document physical height shrinks to 1 page
             await page.evaluate("""() => {
                 let zoomLevel = 1.0;
-                // A4 height is 1122px. Margins: top 15mm, bottom 15mm = 30mm (~113px).
-                // 1122 - 113 = 1009px absolute physical maximum body height. 
-                const max_printable_height = 1000;
-                while (document.documentElement.scrollHeight > max_printable_height && zoomLevel > 0.85) {
-                    zoomLevel -= 0.02;
+                // A4 height is 1122px. Margins: top 15mm, bottom 12mm = 27mm (~102px).
+                // 1122 - 102 = 1020px absolute physical maximum body height. 
+                const max_printable_height = 1015;
+                
+                // Wrap content to accurately measure intrinsic height
+                const wrapper = document.createElement('div');
+                while (document.body.firstChild) {
+                    wrapper.appendChild(document.body.firstChild);
+                }
+                document.body.appendChild(wrapper);
+                
+                // Reduce zoom until physical scaled height fits
+                while ((wrapper.scrollHeight * zoomLevel) > max_printable_height && zoomLevel >= 0.65) {
+                    zoomLevel -= 0.01;
                     document.body.style.zoom = zoomLevel;
                 }
             }""")
@@ -414,10 +453,6 @@ async def generate_pdf(html_path, output_pdf_path, force_single_page=False):
             margin={"top": "0", "right": "0", "bottom": "0", "left": "0"},
         )
         await browser.close()
-
-    # Clean up temporary HTML file
-    if os.path.exists(html_path):
-        os.remove(html_path)
 
     print(f"✅ Lebenslauf PDF erfolgreich generiert: {output_pdf_path}")
 
@@ -434,6 +469,11 @@ def main():
         "--config",
         default="config.json",
         help="Pfad zur config.json Datei (Standard: config.json)",
+    )
+    parser.add_argument(
+        "--keep-html",
+        action="store_true",
+        help="HTML-Datei nach der PDF-Generierung beibehalten (für Debugging)",
     )
     args = parser.parse_args()
 
@@ -469,6 +509,12 @@ def main():
         # Step 2: Convert HTML to PDF via Playwright
         force_single_page = config.get("settings", {}).get("force_single_page", False)
         asyncio.run(generate_pdf(html_file, output_pdf, force_single_page))
+
+        # Step 3: Clean up temporary HTML file unless --keep-html is set
+        if not args.keep_html and os.path.exists(temp_html):
+            os.remove(temp_html)
+        elif args.keep_html:
+            print(f"📄 HTML-Datei beibehalten: {temp_html}")
 
     except json.JSONDecodeError as e:
         print(f"❌ JSON-Fehler in {config_path}: {e}")
